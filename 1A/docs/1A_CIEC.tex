@@ -1,0 +1,37 @@
+\documentclass{assignment}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+
+\lstset{
+	inputencoding=utf8,
+	literate=
+	{á}{{\'a}}1
+	{é}{{\'e}}1
+	{í}{{\'i}}1
+	{ó}{{\'o}}1
+	{ú}{{\'u}}1
+	{Á}{{\'A}}1
+	{É}{{\'E}}1
+	{Í}{{\'I}}1
+	{Ó}{{\'O}}1
+	{Ú}{{\'U}}1
+	{ñ}{{\~n}}1
+	{Ñ}{{\~N}}1
+}
+\begin{document}
+	
+	\assignmentTitle{Claudio Iván Esparza Castañeda}{Luis Alberto Balam Guzmán}{./Logo.png}{Maestría en Sistemas Embebidos}{Programación y Procesamiento de Datos}{1A. Práctica de fundamentos de programación en Python}
+	
+	\section*{Objetivo}
+	Python es un lenguaje de programación de alto de nivel, el cual en los últimos años ha ganado popularidad debido a la facilidad de su sintaxis, y el amplio rango de aplicaciones en que puede ser empleado.\\
+		La presente, es una práctica introductoria al lenguaje, en la que se explora el uso de variables, los tipos de datos, estructuras condicionales, estrcturas cíclicas, métodos de entrada y salida, así como el propio Python 3.\\
+		Este programa involucra el uso de un menú para el control del flujo, el cual debe ser ser robusto, y existe una restricción importante: no se deben usar tuplas, listas, diccionarios, ni ninguna estructura que no haya sido vista en clase.
+	\section*{Pseudocódigo}
+	\lstinputlisting[caption={Análisis de temperaturas}, label={lst:temperaturas}]{AnalisisTemperaturas.psc}
+	\section*{Conclusiones}
+	Habiendo tenido experiencia anterior usando Python, resulta problemático volverse a los orígenes para relizar un programa en el que no se emplearían elementos ya conocidos. Sin embargo se aborda el reto. Las principales limitantes fueron que, al no poder usar elementos como listas, diccionarios, tuplas y conjuntos, entonces se requería establecer por separado el nombre de cada variable, en lugar de poder establecer elementos iterables. Estos elementos iterables, a su vez, serían necesarios para usar algún ciclo {\tt for} que redujero el número de líneas de código necesarias para recorrer las validaciones pertinentes en todos los elementos.\\
+	La única "trampa" que podría considerarse, es el uso de la estructura para validar si un elemento es o no un {\tt float}. Se tomó un ejemplo del siguiente link \href{https://stackoverflow.com/questions/35808484/how-to-check-if-a-string-represents-a-float-number}{stackoverflow}. Como tampoco se pueden tomar estructuras {\tt try catch}, se adaptó usando {\tt if else}.\\
+	El repositorio de este proyecto es: \href{https://github.com/clivan/Programacion_y_Procesamiento_de_Datos_Infotec}{Programación y procesamiento de Datos}.
+	
+\end{document}
