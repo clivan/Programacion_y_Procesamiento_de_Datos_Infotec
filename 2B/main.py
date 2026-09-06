@@ -1,117 +1,164 @@
+import numpy as np
+from funciones import pedirint, pedirfloat #Funciones recicladas de tareas anteriores
 
-"""
-Funciones auxiliares de validación
-"""
-def pedirint(mensaje):
-    valor=input(mensaje).strip()
-    while not valor.lstrip("-").isdigit():
-        print("Error: Entrada no válida. Ingresa un número entero.")
-        valor=input(mensaje).strip()
-    return int(valor)
- 
-def pedirtexto(mensaje):
-    valor=input(mensaje).strip()
-    while not valor:
-        print("Error: La entrada no puede estar vacía.")
-        valor=input(mensaje).strip()
-    return valor
- 
-def pedirbin(mensaje):
-    valor=input(mensaje).strip()
-    while valor not in ("0", "1"):
-        print("Error: Solo se permite 0 o 1.")
-        valor=input(mensaje).strip()
-    return int(valor)
- 
- 
+N_LECTURAS=10  # cantidad de lecturas (días) por variable
+
 def menu():
     print("===========================")
-    print("Menú principal")
+    print(" Análisis de Datos Climáticos")
     print("===========================")
-    print("1. Registrar sensor")
-    print("2. Capturar lecturas")
-    print("3. Mostrar lecturas")
-    print("4. Generar reporte")
-    print("5. Salir")
- 
-class Sensores:
+    print("1. Capturar datos")
+    print("2. Imprimir datos")
+    print("3. Calcular estadísticas")
+    print("4. Indexamiento y filtrado")
+    print("5. Álgebra lineal")
+    print("6. Funciones especiales")
+    print("7. Salir")
+
+
+class Clima:
     def __init__(self):
-        self.sensores=[] #(id_sensor, nombre, tipo)
-        self.lecturas=[] #{"id_sensor": id, "lecturas": []}
- 
-    def buscar(self, id_sensor):
-        return next((s for s in self.sensores if s[0]==id_sensor), None)
- 
-    def registrar(self):
-        print("\n-- Registrar sensor ---")
-        id_sensor=pedirint("ID del sensor (Int): ")
-        if self.buscar(id_sensor):
-            print(f"Ya existe un sensor con el ID {id_sensor}.\n")
-            return
-        nombre=pedirtexto("Nombre del sensor: ")
-        tipo=pedirtexto("Tipo de sensor: ")
-        self.sensores.append((id_sensor, nombre, tipo))
-        print(f"Sensor registrado: ({id_sensor}, {nombre}, {tipo})\n")
- 
+        self.temperatura=[]
+        self.humedad=[]
+        self.viento=[]
+
+    def novacio(self):
+        return len(self.temperatura) > 0
+
+    # Opción 1: Capturar datos
     def capturar(self):
-        print("\n --- Capturar lecturas ---")
-        id_sensor=pedirint("ID del sensor a capturar: ")
-        if not self.buscar(id_sensor):
-            print(f"No existe ningún sensor con el ID {id_sensor}.\n")
+        print(f"\n--- Capturar datos ({N_LECTURAS} lecturas) ---")
+        temperatura, humedad, viento=[], [], []
+        for i in range(1, N_LECTURAS + 1):
+            print(f"-- Día {i} --")
+            temperatura.append(pedirfloat(f"  Temperatura día {i}: "))
+            humedad.append(pedirfloat(f"  Humedad día {i}: "))
+            viento.append(pedirfloat(f"  Viento día {i}: "))
+        self.temperatura=temperatura
+        self.humedad=humedad
+        self.viento=viento
+        print("Datos capturados correctamente.\n")
+
+    # Opción 2: Imprimir datos
+    def imprimir(self):
+        print("\n--- Datos capturados ---")
+        if not self.novacio():
+            print("No hay datos capturados todavía.\n")
             return
-        cantidad=pedirint("Cantidad de lecturas a capturar: ")
-        while cantidad<=0:
-            cantidad=pedirint("La cantidad debe ser mayor a cero. Intenta de nuevo: ")
-        valores=[pedirbin(f"Lectura {i}/{cantidad}(0/1): ") for i in range(1, cantidad+1)]
-        self.lecturas.append({"id_sensor": id_sensor, "lecturas": valores})
-        print(f"Lecturas capturadas para el sensor {id_sensor}: {valores}\n")
- 
-    def mostrar(self):
-        print("\n--- Mostrar lecturas --")
-        if not self.lecturas:
-            print("No hay lecturas registradas todavía.\n")
+        print(f"Temperaturas: {self.temperatura}")
+        print(f"Humedades:    {self.humedad}")
+        print(f"Vientos:      {self.viento}\n")
+
+    # Opción 3: Calcular estadísticas
+    def estadisticas(self):
+        print("\n--- Estadísticas ---")
+        if not self.novacio():
+            print("No hay datos capturados todavía.\n")
             return
-        for registro in self.lecturas:
-            datos=registro["lecturas"]
-            print(f"Sensor ID: {registro['id_sensor']}")
-            print(f"Lecturas: {datos}")
-            print(f"Eventos activos (1): {datos.count(1)}")
-            print(f"Reposo (0): {datos.count(0)}")
- 
-    def reporte(self):
-        print("\n--- Reporte general ---")
-        print("Sensores registrados: ")
-        for id_sensor, nombre, tipo in self.sensores:
-            print(f"\tID {id_sensor}\t{nombre}\t{tipo}")
-        if not self.sensores:
-            print("No hay sensores registrados")
-        print(f"\nLecturas registradas:")
-        for registro in self.lecturas:
-            print(f"Sensor {registro['id_sensor']}: {registro['lecturas']}")
-        if not self.lecturas:
-            print("No hay lecturas registradas")
+        variables={
+            "Temperatura": np.array(self.temperatura),
+            "Humedad": np.array(self.humedad),
+            "Viento": np.array(self.viento),
+        }
+        for nombre, arreglo in variables.items():
+            print(f"{nombre}:")
+            print(f"  Media:               {arreglo.mean():.2f}")
+            print(f"  Máximo:              {arreglo.max():.2f}")
+            print(f"  Mínimo:              {arreglo.min():.2f}")
+            print(f"  Desviación estándar: {arreglo.std():.2f}")
         print()
- 
- 
+
+    # Opción 4: Indexamiento y filtrado
+    def filtrado(self):
+        print("\n--- Indexamiento y filtrado ---")
+        if not self.novacio():
+            print("No hay datos capturados todavía.\n")
+            return
+        temp=np.array(self.temperatura)
+        hum=np.array(self.humedad)
+        vien=np.array(self.viento)
+        promedio_temp=temp.mean()
+        dias_temp_alta=np.where(temp>promedio_temp)[0] + 1
+        print(f"Promedio de temperatura: {promedio_temp:.2f}")
+        print(f"Días con temperatura mayor al promedio: {dias_temp_alta.tolist()}")
+        print(f"  Valores: {temp[temp > promedio_temp].tolist()}")
+        dias_humedad_baja = np.where(hum < 40)[0] + 1
+        print(f"\nDías con humedad menor a 40: {dias_humedad_baja.tolist()}")
+        print(f"  Valores: {hum[hum < 40].tolist()}")
+        mascara_combo = (temp > 30) & (vien > 20)
+        dias_combo = np.where(mascara_combo)[0] + 1
+        print(f"\nDías con temperatura > 30 y viento > 20: {dias_combo.tolist()}")
+        print(f"  Temperaturas: {temp[mascara_combo].tolist()}")
+        print(f"  Vientos:      {vien[mascara_combo].tolist()}\n")
+
+    # Opción 5: Álgebra lineal
+    def algebra(self):
+        print("\n--- Álgebra lineal ---")
+        if not self.novacio():
+            print("No hay datos capturados todavía.\n")
+            return
+        temp=np.array(self.temperatura)
+        hum=np.array(self.humedad)
+        vien=np.array(self.viento)
+
+        def normalizar(vector):
+            norma = np.linalg.norm(vector)
+            return vector / norma if norma != 0 else vector
+
+        temp_norm=normalizar(temp)
+        hum_norm=normalizar(hum)
+        vien_norm=normalizar(vien)
+        print("Vectores normalizados:")
+        print(f"  Temperatura: {np.round(temp_norm, 3)}")
+        print(f"  Humedad:     {np.round(hum_norm, 3)}")
+        print(f"  Viento:      {np.round(vien_norm, 3)}")
+        dot_temp_hum=np.dot(temp_norm, hum_norm)
+        dot_temp_vien=np.dot(temp_norm, vien_norm)
+        print(f"\nProducto punto Temperatura-Humedad: {dot_temp_hum:.4f}")
+        print(f"Producto punto Temperatura-Viento:  {dot_temp_vien:.4f}")
+        matriz=np.vstack([temp_norm, hum_norm, vien_norm])  # matriz 3x10
+        print(f"\nMatriz 3x{N_LECTURAS} de datos normalizados:")
+        print(np.round(matriz, 3))
+        corr=np.corrcoef(matriz)
+        print("\nMatriz de correlación 3x3 (Temperatura, Humedad, Viento):")
+        print(np.round(corr, 3))
+        print()
+
+    # Opción 6: Funciones especiales
+    def funciones_especiales(self):
+        print("\n--- Funciones especiales ---")
+        if not self.novacio():
+            print("No hay datos capturados todavía.\n")
+            return
+        temp=np.array(self.temperatura)
+        hum=np.array(self.humedad)
+        indice_termico=temp*np.exp(hum/100)
+        print("Índice térmico simulado (IT = temperatura * exp(humedad/100)):")
+        print(f"Primeros 5 valores: {np.round(indice_termico[:5], 3)}\n")
+
 def main():
     a=0
-    sistema=Sensores()
+    clima=Clima()
     menu()
-    while (a!=5):
-        a=pedirint("Selecciona una opción: ")
-        if (a==1):
-            sistema.registrar()
-        if (a==2):
-            sistema.capturar()
-        if (a==3):
-            sistema.mostrar()
-        if (a==4):
-            sistema.reporte()
-        if (a!=1 and a!=2 and a!=3 and a!=4 and a!=5):
-            print("Opción no válida")
-        if (a!=5):
+    while a!=7:
+        a=pedirint("Opción: ")
+        if a==1:
+            clima.capturar()
+        elif a==2:
+            clima.imprimir()
+        elif a==3:
+            clima.estadisticas()
+        elif a==4:
+            clima.filtrado()
+        elif a==5:
+            clima.algebra()
+        elif a==6:
+            clima.funciones_especiales()
+        elif a!=7:
+            print("Opción no válida\n")
+        if a!=7:
             menu()
     print("Finalizando el programa...")
- 
+
 if __name__ == "__main__":
     main()
